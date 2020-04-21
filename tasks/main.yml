@@ -29,7 +29,7 @@
   systemd:
       name: tgt
       state: restarted
-  when: iscsi_volumes or configs.changed == True
+  when: iscsi_volumes or configs.changed
 
 
 - name: iSCSI initiator packages
@@ -50,4 +50,7 @@
       node_pass: "{{ target.creds.pass }}"
       show_nodes: true
   register: iscsi_luns
+  loop: "{{ iscsi_targets }}"
+  loop_control:
+      loop_var: target
 
