@@ -16,7 +16,7 @@
 
 - name: iSCSI targets
   template:
-      src: "iscsi_target.j2"
+      src: "iscsi_target.conf.j2"
       dest: "/etc/tgt/conf.d/{{ target.name }}.conf"
   when: iscsi_targets
   register: configs
