@@ -37,6 +37,11 @@
           name:
               - open-iscsi
 
+    - name: iSCSI initiator service
+      service:
+          state: started
+          name: iscsid
+
     - name: iSCSI target configuration
       open_iscsi:
           target: "iqn.{{ target.iqn }}:{{ target.lun }}"
