@@ -4,4 +4,3 @@
       name: tgt
       state: restarted
   when: configs.changed
-

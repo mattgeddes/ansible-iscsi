@@ -26,8 +26,6 @@
 
   when: iscsi_volumes
 
-####
-
 - name: iSCSI initiators
   block:
 
@@ -46,7 +44,7 @@
       open_iscsi:
           target: "iqn.{{ target.iqn }}:{{ target.lun }}"
           portal: "{{ target.portal }}"
-          automatic: yes
+          discover: yes
           login: yes
           node_auth: CHAP
           node_user: "{{ target.creds.user }}"
@@ -58,4 +56,3 @@
           loop_var: target
 
   when: iscsi_targets
-
