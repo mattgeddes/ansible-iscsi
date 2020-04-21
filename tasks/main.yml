@@ -1,16 +1,17 @@
 ---
 - name: Packages for service iSCSI targets
   package:
-      state: latest
+      state: present
       name:
           - tgt
+  when: iscsi_volumes
 
 - name: Sparse iSCSI backing stores
   command:
       cmd: "dd if=/dev/zero bs=1 count=1 seek={{ target.size }} of={{ target.filename }}"
       creates: "{{ target.filename }}"
-  when: iscsi_targets
-  loop: "{{ iscsi_targets }}"
+  when: iscsi_volumes
+  loop: "{{ iscsi_volumes }}"
   loop_control:
       loop_var: target
 
@@ -18,9 +19,9 @@
   template:
       src: "iscsi_target.conf.j2"
       dest: "/etc/tgt/conf.d/{{ target.name }}.conf"
-  when: iscsi_targets
+  when: iscsi_volumes
   register: configs
-  loop: "{{ iscsi_targets }}"
+  loop: "{{ iscsi_volumes }}"
   loop_control:
       loop_var: target
 
@@ -28,4 +29,25 @@
   systemd:
       name: tgt
       state: restarted
+  when: iscsi_volumes or configs.changed == True
+
+
+- name: iSCSI initiator packages
+  package:
+      state: present
+      name:
+          - open-iscsi
+  when: iscsi_targets
+
+- name: iSCSI target configuration
+  open_iscsi:
+      target: "iqn.{{ target.iqn }}:{{ target.lun }}"
+      portal: "{{ portal }}"
+      automatic: yes
+      login: yes
+      node_auth: CHAP
+      node_user: "{{ target.creds.user }}"
+      node_pass: "{{ target.creds.pass }}"
+      show_nodes: true
+  register: iscsi_luns
 
