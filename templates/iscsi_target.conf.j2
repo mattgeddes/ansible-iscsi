@@ -1,0 +1,7 @@
+<target iqn.{{ target.iqn }}:{{ target.name }}>
+    backing-store {{ target.filename }}
+    initiator-address {{ target.client }}
+    incominguser {{ target.in_creds.user }} {{ target.in_creds.pass }}
+    outgoinguser {{ target.out_creds.user }} {{ target.out_creds.pass }}
+</target>
+

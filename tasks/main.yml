@@ -1,0 +1,31 @@
+---
+- name: Packages for service iSCSI targets
+  package:
+      state: latest
+      name:
+          - tgt
+
+- name: Sparse iSCSI backing stores
+  command:
+      cmd: "dd if=/dev/zero bs=1 count=1 seek={{ target.size }} of={{ target.filename }}"
+      creates: "{{ target.filename }}"
+  when: iscsi_targets
+  loop: "{{ iscsi_targets }}"
+  loop_control:
+      loop_var: target
+
+- name: iSCSI targets
+  template:
+      src: "iscsi_target.j2"
+      dest: "/etc/tgt/conf.d/{{ target.name }}.conf"
+  when: iscsi_targets
+  register: configs
+  loop: "{{ iscsi_targets }}"
+  loop_control:
+      loop_var: target
+
+- name: Restart tgt
+  systemd:
+      name: tgt
+      state: restarted
+
