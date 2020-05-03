@@ -1,7 +1,6 @@
 galaxy_info:
   author: Matthew Geddes
-  description: Matthew Geddes
-  company: N/A
+  description: Ansible role for deployment of Linux iSCSI initiators and targets
   license: Apache-2.0
   min_ansible_version: 2.4
   platforms:
