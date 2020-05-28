@@ -2,5 +2,5 @@
 - name: Restart tgt
   systemd:
       name: tgt
-      state: restarted
+      state: reloaded
   when: configs.changed

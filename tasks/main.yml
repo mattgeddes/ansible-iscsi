@@ -6,23 +6,30 @@
         state: present
         name:
           - tgt
-
-    - name: Sparse iSCSI backing stores
-      command:
-          cmd: "dd if=/dev/zero bs=1 count=1 seek={{ target.size }} of={{ target.filename }}"
-          creates: "{{ target.filename }}"
+    - name: Directories for iSCSI backing stores
+      file:
+        state: directory
+        recurse: true
+        path: "{{ target.filename | dirname }}"
       loop: "{{ iscsi_volumes }}"
       loop_control:
-          loop_var: target
+        loop_var: target
+    - name: Sparse iSCSI backing stores
+      command:
+        cmd: "dd if=/dev/zero bs=1 count=1 seek={{ target.size }} of={{ target.filename }}"
+        creates: "{{ target.filename }}"
+      loop: "{{ iscsi_volumes }}"
+      loop_control:
+        loop_var: target
 
     - name: iSCSI targets
       template:
-          src: "iscsi_target.conf.j2"
-          dest: "/etc/tgt/conf.d/{{ target.name }}.conf"
+        src: "iscsi_target.conf.j2"
+        dest: "/etc/tgt/conf.d/{{ target.name }}.conf"
       register: configs
       loop: "{{ iscsi_volumes }}"
       loop_control:
-          loop_var: target
+        loop_var: target
 
   when: iscsi_volumes
 
