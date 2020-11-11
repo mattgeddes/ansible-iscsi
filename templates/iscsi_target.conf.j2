@@ -3,5 +3,11 @@
     initiator-address {{ target.client }}
     incominguser {{ target.in_creds.user }} {{ target.in_creds.pass }}
     outgoinguser {{ target.out_creds.user }} {{ target.out_creds.pass }}
+{%if target.vendor is defined %}    vendor_id {{ target.vendor }}
+{% endif %}
+{%if target.product is defined %}    product_id {{ target.product }}
+{% endif %}
+{%if target.revision is defined %}    revision_id {{ target.revision }}
+{% endif %}
 </target>
 
